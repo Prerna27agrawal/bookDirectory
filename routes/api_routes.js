@@ -1,5 +1,3 @@
-// const req = require('express/lib/request');
-
 const router = require('express').Router();
 const { is } = require('express/lib/request');
 const books = require('./booksDB.js');
@@ -18,6 +16,7 @@ router.get("/book/:id", (req,res)=>{
 
 
 router.post("/addBook",(req,res)=>{
+   console.log(req.body);
    const {
       isbn,
       title,
@@ -30,6 +29,7 @@ router.post("/addBook",(req,res)=>{
       website
    } = req.body;
    const  bookFound = booksDirectory.find(book => book.isbn === isbn);
+   console.log(bookFound);
    if(bookFound) return res.send("This Book is already present");
    const book = {
       isbn,
@@ -43,8 +43,8 @@ router.post("/addBook",(req,res)=>{
       website
    }
    booksDirectory.push(book);
-   res.send("Added the following to the list "+ book);
-
+   res.send(book);
+   console.log(book);
 });
 
 router.put("/updateBook/:id", (req,res)=>{
@@ -59,7 +59,8 @@ router.put("/updateBook/:id", (req,res)=>{
       description,
       website
    } = req.body;
-   let book = booksDirectory.find(foundBook = foundBook.isbn === req.params.id);
+   let book = booksDirectory.find(foundBook => foundBook.isbn === req.params.id);
+   console.log(book);
    if( !book) return res.status(404).send("book does not exist");
    const updateField = (val, prev) => !val ? prev: val;
    const updatedBook = {
@@ -74,8 +75,11 @@ router.put("/updateBook/:id", (req,res)=>{
       description : updateField(description, book.description),
       website : updateField(website, book.website),
    }
+   console.log(updatedBook);
    const bookIndex = booksDirectory.findIndex(b => b.isbn === book.isbn);
+   console.log(bookIndex);
    booksDirectory.splice(bookIndex,1,updatedBook);
+   console.log(updatedBook);
    res.status(200).send(updatedBook);
 });
 
